@@ -1490,3 +1490,76 @@ a:hover {
     color: var(--accent-light);
     text-decoration: underline;
 } 
+
+/* Styling for the Sources within a message bubble */
+.message-sources {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.message.user .message-sources {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.message-sources h4 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-sm);
+    color: var(--secondary-text);
+}
+
+.message.user .message-sources h4 {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.source-link {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    color: var(--accent);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.message.user .source-link {
+    color: var(--accent-lighter);
+}
+
+.source-link:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.source-link i {
+    margin-right: var(--spacing-sm);
+}
+
+/* Styling for the Suggested Prompts Container */
+.suggested-prompts-container {
+    padding: 0 var(--spacing-xl) var(--spacing-md);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    transition: all 0.3s ease;
+}
+
+.suggestion-btn {
+    background: var(--panel-background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--primary-text);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.suggestion-btn:hover {
+    background: var(--accent-lighter);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
