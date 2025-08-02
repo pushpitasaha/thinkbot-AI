@@ -152,32 +152,23 @@ class ThinkBotAI {
     }
 
     initializeSplitTextAnimations() {
-        // Register GSAP plugins
         if (typeof gsap !== 'undefined') {
             gsap.registerPlugin(ScrollTrigger);
-            
-            // Initialize SplitText animation for modules title
             this.initializeModulesTitleAnimation();
         }
     }
 
     initializeModulesTitleAnimation() {
         if (!this.modulesTitle) return;
-
-        // Create SplitText instance
         const splitText = new SplitText(this.modulesTitle, {
             type: "chars",
             charsClass: "char"
         });
-
-        // Set initial state
         gsap.set(splitText.chars, {
             opacity: 0,
             y: 40,
             rotationX: -90
         });
-
-        // Create animation timeline
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: this.modulesTitle,
@@ -186,8 +177,6 @@ class ThinkBotAI {
                 toggleActions: "play none none reverse"
             }
         });
-
-        // Animate characters
         tl.to(splitText.chars, {
             opacity: 1,
             y: 0,
@@ -196,8 +185,6 @@ class ThinkBotAI {
             ease: "power3.out",
             stagger: 0.05
         });
-
-        // Cleanup function
         return () => {
             splitText.revert();
             tl.kill();
@@ -206,21 +193,11 @@ class ThinkBotAI {
 
     initializeWelcomeAnimations() {
         if (!this.welcomeCards.length) return;
-
         this.welcomeCards.forEach((card, index) => {
-            // Add GSAP classes
             card.classList.add('gsap-tilt', 'gsap-glow');
-            
-            // Initialize particle system
             this.initializeParticleSystem(card);
-            
-            // Initialize tilt and magnetism
             this.initializeTiltAndMagnetism(card);
-            
-            // Initialize glow effect
             this.initializeGlowEffect(card);
-            
-            // Initialize click effect
             this.initializeClickEffect(card);
         });
     }
@@ -228,7 +205,6 @@ class ThinkBotAI {
     initializeParticleSystem(card) {
         const particleCount = 8;
         const particles = [];
-
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -246,22 +222,23 @@ class ThinkBotAI {
             card.appendChild(particle);
             particles.push(particle);
         }
-
         card.addEventListener('mouseenter', () => {
             particles.forEach((particle, index) => {
-                const timeoutId = setTimeout(() => {
+                setTimeout(() => {
                     const rect = card.getBoundingClientRect();
                     const x = Math.random() * rect.width;
                     const y = Math.random() * rect.height;
-                    
                     particle.style.left = x + 'px';
                     particle.style.top = y + 'px';
-                    
-                    gsap.fromTo(particle, 
-                        { scale: 0, opacity: 0 },
-                        { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(1.7)" }
-                    );
-
+                    gsap.fromTo(particle, {
+                        scale: 0,
+                        opacity: 0
+                    }, {
+                        scale: 1,
+                        opacity: 1,
+                        duration: 0.3,
+                        ease: "back.out(1.7)"
+                    });
                     gsap.to(particle, {
                         x: (Math.random() - 0.5) * 50,
                         y: (Math.random() - 0.5) * 50,
@@ -271,7 +248,6 @@ class ThinkBotAI {
                         repeat: -1,
                         yoyo: true,
                     });
-
                     gsap.to(particle, {
                         opacity: 0.3,
                         duration: 1.5,
@@ -282,7 +258,6 @@ class ThinkBotAI {
                 }, index * 100);
             });
         });
-
         card.addEventListener('mouseleave', () => {
             particles.forEach(particle => {
                 gsap.to(particle, {
@@ -302,11 +277,8 @@ class ThinkBotAI {
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-
-            // Tilt effect
             const rotateX = ((y - centerY) / centerY) * -8;
             const rotateY = ((x - centerX) / centerX) * 8;
-
             gsap.to(card, {
                 rotateX,
                 rotateY,
@@ -314,11 +286,8 @@ class ThinkBotAI {
                 ease: "power2.out",
                 transformPerspective: 1000,
             });
-
-            // Magnetism effect
             const magnetX = (x - centerX) * 0.03;
             const magnetY = (y - centerY) * 0.03;
-
             gsap.to(card, {
                 x: magnetX,
                 y: magnetY,
@@ -326,7 +295,6 @@ class ThinkBotAI {
                 ease: "power2.out",
             });
         });
-
         card.addEventListener('mouseleave', () => {
             gsap.to(card, {
                 rotateX: 0,
@@ -346,12 +314,10 @@ class ThinkBotAI {
             const y = e.clientY - rect.top;
             const relativeX = (x / rect.width) * 100;
             const relativeY = (y / rect.height) * 100;
-
             card.style.setProperty('--glow-x', `${relativeX}%`);
             card.style.setProperty('--glow-y', `${relativeY}%`);
             card.style.setProperty('--glow-intensity', '1');
         });
-
         card.addEventListener('mouseleave', () => {
             card.style.setProperty('--glow-intensity', '0');
         });
@@ -362,14 +328,12 @@ class ThinkBotAI {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
             const maxDistance = Math.max(
                 Math.hypot(x, y),
                 Math.hypot(x - rect.width, y),
                 Math.hypot(x, y - rect.height),
                 Math.hypot(x - rect.width, y - rect.height)
             );
-
             const ripple = document.createElement('div');
             ripple.style.cssText = `
                 position: absolute;
@@ -382,26 +346,25 @@ class ThinkBotAI {
                 pointer-events: none;
                 z-index: 1000;
             `;
-
             card.appendChild(ripple);
-
-            gsap.fromTo(ripple, 
-                { scale: 0, opacity: 1 },
-                { scale: 1, opacity: 0, duration: 0.8, ease: "power2.out", onComplete: () => ripple.remove() }
-            );
+            gsap.fromTo(ripple, {
+                scale: 0,
+                opacity: 1
+            }, {
+                scale: 1,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                onComplete: () => ripple.remove()
+            });
         });
     }
 
     switchTab(tabName) {
-        // Update navigation
         this.navItems.forEach(item => item.classList.remove('active'));
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-        // Update content
         this.tabContents.forEach(content => content.classList.remove('active'));
         document.getElementById(`${tabName}-tab`).classList.add('active');
-
-        // Trigger SplitText animation when modules tab is opened
         if (tabName === 'modules' && this.modulesTitle) {
             setTimeout(() => {
                 this.initializeModulesTitleAnimation();
@@ -410,22 +373,23 @@ class ThinkBotAI {
     }
 
     handleModuleClick(module) {
-        // Switch to chat tab and send a module-specific message
         this.switchTab('chat');
-        
         const moduleMessages = {
+            // Questions from "R Support Academy" cards
             'bibliometric-rstudio': "I'd like to learn about bibliometric analysis and RStudio. Can you help me get started?",
             'data-collection': "I want to learn about data collection and preparation in R. What should I know?",
             'bibliometric-techniques': "I'm interested in bibliometric analysis techniques. Can you show me some examples?",
             'data-visualization': "I need help with data visualization and interpretation in R. Where should I begin?",
-            basics: "I'd like to learn about R basics. Can you help me get started?",
-            data: "I want to learn about data manipulation in R. What should I know?",
-            visualization: "I'm interested in data visualization with R. Can you show me some examples?",
-            statistics: "I need help with statistical analysis in R. Where should I begin?",
-            packages: "I want to learn about R packages. Which ones are most important?",
-            advanced: "I'm ready for advanced R programming concepts. What should I focus on?"
-        };
 
+            // New questions from modified "Frequently Asked" sidebar
+            'bibliometrics-intro': "What is bibliometrics?",
+            'r-vs-rstudio': "What is the difference between R and RStudio?",
+            'assigning-variables': "How do I assign a variable in R?",
+            'about-ggplot2': "Tell me about the ggplot2 package.",
+            'about-dplyr': "What does the dplyr package do?",
+            'review-my-code': "Can you review my R code and suggest improvements?",
+            'what-is-pvalue': "What is a p-value in statistics?"
+        };
         const message = moduleMessages[module] || "Tell me about R programming.";
         this.messageInput.value = message;
         this.sendMessage();
@@ -438,22 +402,19 @@ class ThinkBotAI {
             visualization: "I want to create charts and graphs in R. Can you help?",
             code: "I have some R code that's not working. Can you review it?"
         };
-
         const message = suggestionMessages[suggestion] || "I need help with R programming.";
         this.welcomeMessageInput.value = message;
         this.sendWelcomeMessage();
     }
 
-    sendWelcomeMessage() {
+    async sendWelcomeMessage() {
         const message = this.welcomeMessageInput.value.trim();
         if (!message) return;
 
-        // Hide welcome message when first message is sent
         if (this.welcomeContainer && this.welcomeContainer.style.display !== 'none') {
             this.welcomeContainer.style.display = 'none';
         }
 
-        // Create user message
         const userMessage = {
             id: Date.now(),
             type: 'user',
@@ -466,27 +427,58 @@ class ThinkBotAI {
         this.welcomeMessageInput.value = '';
         this.welcomeMessageInput.style.height = 'auto';
 
-        // Show typing indicator
         this.showTypingIndicator();
+        this.displaySuggestedPrompts([]);
 
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: message
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const aiResponse = {
+                id: Date.now() + 1,
+                type: 'ai',
+                text: data.answer,
+                sources: data.sources || [],
+                timestamp: new Date()
+            };
+
             this.hideTypingIndicator();
-            const aiResponse = this.generateAIResponse(message, []);
             this.addMessageToChat(aiResponse);
-        }, 1000 + Math.random() * 2000);
+            this.displaySuggestedPrompts(data.suggested_prompts || []);
+
+        } catch (error) {
+            console.error('Error fetching AI response:', error);
+            this.hideTypingIndicator();
+            const errorResponse = {
+                id: Date.now() + 1,
+                type: 'ai',
+                text: 'Sorry, I am having trouble connecting to the server.',
+                timestamp: new Date()
+            };
+            this.addMessageToChat(errorResponse);
+        }
     }
 
     async sendMessage() {
         const message = this.messageInput.value.trim();
         if (!message && this.attachments.length === 0) return;
 
-        // Hide welcome message when first message is sent
         if (this.welcomeContainer && this.welcomeContainer.style.display !== 'none') {
             this.welcomeContainer.style.display = 'none';
         }
 
-        // Create user message
         const userMessage = {
             id: Date.now(),
             type: 'user',
@@ -501,15 +493,48 @@ class ThinkBotAI {
         this.attachments = [];
         this.updateAttachmentsDisplay();
 
-        // Show typing indicator
         this.showTypingIndicator();
+        this.displaySuggestedPrompts([]);
 
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: message
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const aiResponse = {
+                id: Date.now() + 1,
+                type: 'ai',
+                text: data.answer,
+                sources: data.sources || [],
+                timestamp: new Date()
+            };
+
             this.hideTypingIndicator();
-            const aiResponse = this.generateAIResponse(message, userMessage.attachments);
             this.addMessageToChat(aiResponse);
-        }, 1000 + Math.random() * 2000);
+            this.displaySuggestedPrompts(data.suggested_prompts || []);
+
+        } catch (error) {
+            console.error('Error fetching AI response:', error);
+            this.hideTypingIndicator();
+            const errorResponse = {
+                id: Date.now() + 1,
+                type: 'ai',
+                text: 'Sorry, I am having trouble connecting to the server.',
+                timestamp: new Date()
+            };
+            this.addMessageToChat(errorResponse);
+        }
     }
 
     addMessageToChat(message) {
@@ -517,7 +542,6 @@ class ThinkBotAI {
         this.chatMessages.appendChild(messageElement);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
 
-        // Save to current chat
         if (!this.currentChat) {
             this.currentChat = {
                 id: Date.now(),
@@ -527,29 +551,22 @@ class ThinkBotAI {
             };
         }
         this.currentChat.messages.push(message);
-
-        // Update history
         this.updateHistoryPanel();
     }
 
     createMessageElement(message) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${message.type}`;
-
         const content = document.createElement('div');
         content.className = 'message-content';
-
         const text = document.createElement('div');
         text.className = 'message-text';
         text.innerHTML = this.formatMessageText(message.text);
-
         const time = document.createElement('div');
         time.className = 'message-time';
         time.textContent = this.formatTime(message.timestamp);
-
         content.appendChild(text);
 
-        // Add attachments if any
         if (message.attachments && message.attachments.length > 0) {
             message.attachments.forEach(attachment => {
                 const attachmentElement = this.createAttachmentElement(attachment);
@@ -557,18 +574,48 @@ class ThinkBotAI {
             });
         }
 
+        if (message.sources && message.sources.length > 0) {
+            const sourcesContainer = document.createElement('div');
+            sourcesContainer.className = 'message-sources';
+            const sourcesTitle = document.createElement('h4');
+            sourcesTitle.textContent = 'Sources:';
+            sourcesContainer.appendChild(sourcesTitle);
+            message.sources.forEach(source => {
+                const sourceLink = document.createElement('a');
+                sourceLink.className = 'source-link';
+                sourceLink.href = source.video_url || '#';
+                sourceLink.target = '_blank';
+                sourceLink.innerHTML = `<i class="fas fa-book-open"></i> ${source.source_module} (at ${source.timestamp})`;
+                sourcesContainer.appendChild(sourceLink);
+            });
+            content.appendChild(sourcesContainer);
+        }
+
         content.appendChild(time);
-
         messageDiv.appendChild(content);
-
         return messageDiv;
     }
 
+    displaySuggestedPrompts(prompts) {
+        const container = document.getElementById('suggested-prompts-container');
+        if (!container) return;
+        container.innerHTML = '';
+        if (prompts && prompts.length > 0) {
+            prompts.forEach(promptText => {
+                const button = document.createElement('button');
+                button.className = 'suggestion-btn';
+                button.textContent = promptText.replace(/^\d+\.\s*/, '');
+                button.addEventListener('click', () => {
+                    this.messageInput.value = button.textContent;
+                    this.sendMessage();
+                });
+                container.appendChild(button);
+            });
+        }
+    }
+
     formatMessageText(text) {
-        // Convert URLs to links
         text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-        
-        // Convert code blocks
         text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
             return `<div class="code-block">
                 <div class="code-header">
@@ -578,10 +625,7 @@ class ThinkBotAI {
                 <div class="code-content">${this.escapeHtml(code.trim())}</div>
             </div>`;
         });
-
-        // Convert inline code
         text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-
         return text;
     }
 
@@ -594,28 +638,21 @@ class ThinkBotAI {
     createAttachmentElement(attachment) {
         const attachmentDiv = document.createElement('div');
         attachmentDiv.className = 'attachment';
-
         const icon = document.createElement('div');
         icon.className = 'attachment-icon';
         icon.innerHTML = attachment.type === 'image' ? '<i class="fas fa-image"></i>' : '<i class="fas fa-file"></i>';
-
         const info = document.createElement('div');
         info.className = 'attachment-info';
-
         const name = document.createElement('div');
         name.className = 'attachment-name';
         name.textContent = attachment.name;
-
         const size = document.createElement('div');
         size.className = 'attachment-size';
         size.textContent = this.formatFileSize(attachment.size);
-
         info.appendChild(name);
         info.appendChild(size);
-
         attachmentDiv.appendChild(icon);
         attachmentDiv.appendChild(info);
-
         return attachmentDiv;
     }
 
@@ -638,11 +675,9 @@ class ThinkBotAI {
         const typingDiv = document.createElement('div');
         typingDiv.className = 'message ai typing-indicator';
         typingDiv.id = 'typing-indicator';
-        
         const content = document.createElement('div');
         content.className = 'message-content';
         content.innerHTML = '<div class="loading"><div class="loading-spinner"></div>ThinkBot AI is typing...</div>';
-
         typingDiv.appendChild(content);
         this.chatMessages.appendChild(typingDiv);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
@@ -655,37 +690,9 @@ class ThinkBotAI {
         }
     }
 
-    generateAIResponse(userMessage, attachments) {
-        const responses = [
-            "I'd be happy to help you with that! Here's what you need to know about R programming...",
-            "Great question! Let me explain this concept in R...",
-            "Here's how you can approach this in R...",
-            "I'll show you the R code for this...",
-            "This is a common scenario in R. Here's the solution...",
-            "Let me walk you through this step by step in R..."
-        ];
-
-        let response = responses[Math.floor(Math.random() * responses.length)];
-
-        // Add code example if the message contains programming-related keywords
-        if (userMessage.toLowerCase().includes('code') || 
-            userMessage.toLowerCase().includes('example') ||
-            userMessage.toLowerCase().includes('how to')) {
-            response += "\n\nHere's an example:\n```r\n# Sample R code\ndata <- c(1, 2, 3, 4, 5)\nmean(data)\nplot(data)\n```";
-        }
-
-        return {
-            id: Date.now() + 1,
-            type: 'ai',
-            text: response,
-            timestamp: new Date()
-        };
-    }
-
     handleFileAttachment(event, type) {
         const files = event.target.files;
         if (files.length === 0) return;
-
         const file = files[0];
         const attachment = {
             id: Date.now(),
@@ -694,59 +701,43 @@ class ThinkBotAI {
             type: type,
             file: file
         };
-
         this.attachments.push(attachment);
         this.updateAttachmentsDisplay();
-
-        // Clear the input
         event.target.value = '';
     }
 
     updateAttachmentsDisplay() {
-        // Remove existing attachment displays
         const existingAttachments = document.querySelectorAll('.attachment-display');
         existingAttachments.forEach(att => att.remove());
-
-        // Add new attachment displays
         if (this.attachments.length > 0) {
             const attachmentsContainer = document.createElement('div');
             attachmentsContainer.className = 'attachments-container';
             attachmentsContainer.style.marginBottom = '8px';
-
             this.attachments.forEach(attachment => {
                 const attachmentDiv = document.createElement('div');
                 attachmentDiv.className = 'attachment attachment-display';
-
                 const icon = document.createElement('div');
                 icon.className = 'attachment-icon';
                 icon.innerHTML = attachment.type === 'image' ? '<i class="fas fa-image"></i>' : '<i class="fas fa-file"></i>';
-
                 const info = document.createElement('div');
                 info.className = 'attachment-info';
-
                 const name = document.createElement('div');
                 name.className = 'attachment-name';
                 name.textContent = attachment.name;
-
                 const size = document.createElement('div');
                 size.className = 'attachment-size';
                 size.textContent = this.formatFileSize(attachment.size);
-
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'attachment-remove';
                 removeBtn.innerHTML = '<i class="fas fa-times"></i>';
                 removeBtn.onclick = () => this.removeAttachment(attachment.id);
-
                 info.appendChild(name);
                 info.appendChild(size);
-
                 attachmentDiv.appendChild(icon);
                 attachmentDiv.appendChild(info);
                 attachmentDiv.appendChild(removeBtn);
-
                 attachmentsContainer.appendChild(attachmentDiv);
             });
-
             const inputContainer = document.querySelector('.input-wrapper');
             inputContainer.parentNode.insertBefore(attachmentsContainer, inputContainer);
         }
@@ -776,20 +767,21 @@ class ThinkBotAI {
 
     async startRecording() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true
+            });
             this.mediaRecorder = new MediaRecorder(stream);
             this.recordingChunks = [];
-
             this.mediaRecorder.ondataavailable = (event) => {
                 this.recordingChunks.push(event.data);
             };
-
             this.mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(this.recordingChunks, { type: 'audio/wav' });
+                const audioBlob = new Blob(this.recordingChunks, {
+                    type: 'audio/wav'
+                });
                 this.handleAudioAttachment(audioBlob);
                 stream.getTracks().forEach(track => track.stop());
             };
-
             this.mediaRecorder.start();
             this.isRecording = true;
             this.recordingStartTime = Date.now();
@@ -841,7 +833,6 @@ class ThinkBotAI {
             type: 'audio',
             file: audioBlob
         };
-
         this.attachments.push(attachment);
         this.updateAttachmentsDisplay();
     }
@@ -849,7 +840,6 @@ class ThinkBotAI {
     performSearch() {
         const query = this.searchInput.value.trim();
         if (!query) return;
-
         const results = this.searchChatHistory(query);
         this.displaySearchResults(results);
     }
@@ -857,12 +847,10 @@ class ThinkBotAI {
     searchChatHistory(query) {
         const results = [];
         const searchTerm = query.toLowerCase();
-
         this.chatHistory.forEach(chat => {
-            const matchingMessages = chat.messages.filter(message => 
+            const matchingMessages = chat.messages.filter(message =>
                 message.text.toLowerCase().includes(searchTerm)
             );
-
             if (matchingMessages.length > 0) {
                 results.push({
                     chat: chat,
@@ -870,18 +858,15 @@ class ThinkBotAI {
                 });
             }
         });
-
         return results;
     }
 
     displaySearchResults(results) {
         this.searchResults.innerHTML = '';
-
         if (results.length === 0) {
             this.searchResults.innerHTML = '<div class="text-center">No results found</div>';
             return;
         }
-
         results.forEach(result => {
             const resultDiv = document.createElement('div');
             resultDiv.className = 'search-result-item';
@@ -906,19 +891,16 @@ class ThinkBotAI {
 
     updateHistoryPanel() {
         this.historyList.innerHTML = '';
-
         if (this.chatHistory.length === 0) {
             this.historyList.innerHTML = '<div class="text-center">No chat history</div>';
             return;
         }
-
         this.chatHistory.forEach(chat => {
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
             if (this.currentChat && this.currentChat.id === chat.id) {
                 historyItem.classList.add('active');
             }
-
             const checkbox = document.createElement('div');
             checkbox.className = 'history-checkbox';
             if (this.selectedHistoryItems.has(chat.id)) {
@@ -928,7 +910,6 @@ class ThinkBotAI {
                 e.stopPropagation();
                 this.toggleHistorySelection(chat.id, checkbox);
             });
-
             const content = document.createElement('div');
             content.className = 'history-content';
             content.innerHTML = `
@@ -936,13 +917,11 @@ class ThinkBotAI {
                 <div class="history-preview">${chat.messages[0]?.text.substring(0, 50) || 'No messages'}...</div>
                 <div class="history-time">${this.formatTime(chat.timestamp)}</div>
             `;
-
             historyItem.appendChild(checkbox);
             historyItem.appendChild(content);
             historyItem.addEventListener('click', () => this.loadChat(chat.id));
             this.historyList.appendChild(historyItem);
         });
-
         this.updateHistoryActions();
     }
 
@@ -959,15 +938,12 @@ class ThinkBotAI {
 
     toggleSelectAll() {
         const checkboxes = document.querySelectorAll('.history-checkbox');
-        const allSelected = checkboxes.length > 0 && 
+        const allSelected = checkboxes.length > 0 &&
             Array.from(checkboxes).every(cb => cb.classList.contains('checked'));
-
         if (allSelected) {
-            // Deselect all
             this.selectedHistoryItems.clear();
             checkboxes.forEach(cb => cb.classList.remove('checked'));
         } else {
-            // Select all
             this.chatHistory.forEach(chat => {
                 this.selectedHistoryItems.add(chat.id);
             });
@@ -979,37 +955,28 @@ class ThinkBotAI {
     updateHistoryActions() {
         const hasSelected = this.selectedHistoryItems.size > 0;
         this.clearSelectedHistoryBtn.style.display = hasSelected ? 'flex' : 'none';
-        
-        // Update select all button icon
         const checkboxes = document.querySelectorAll('.history-checkbox');
-        const allSelected = checkboxes.length > 0 && 
+        const allSelected = checkboxes.length > 0 &&
             Array.from(checkboxes).every(cb => cb.classList.contains('checked'));
-        
-        this.selectAllHistoryBtn.innerHTML = allSelected ? 
-            '<i class="fas fa-square"></i>' : 
+        this.selectAllHistoryBtn.innerHTML = allSelected ?
+            '<i class="fas fa-square"></i>' :
             '<i class="fas fa-check-square"></i>';
     }
 
     clearSelectedHistory() {
         if (this.selectedHistoryItems.size === 0) return;
-
-        const confirmMessage = this.selectedHistoryItems.size === 1 ? 
+        const confirmMessage = this.selectedHistoryItems.size === 1 ?
             'Are you sure you want to delete this chat?' :
             `Are you sure you want to delete ${this.selectedHistoryItems.size} chats?`;
-
         if (confirm(confirmMessage)) {
-            // Remove selected chats from history
-            this.chatHistory = this.chatHistory.filter(chat => 
+            this.chatHistory = this.chatHistory.filter(chat =>
                 !this.selectedHistoryItems.has(chat.id)
             );
-
-            // Clear current chat if it was selected
             if (this.currentChat && this.selectedHistoryItems.has(this.currentChat.id)) {
                 this.currentChat = null;
                 this.chatMessages.innerHTML = '';
                 this.showWelcomeMessage();
             }
-
             this.selectedHistoryItems.clear();
             this.saveChatHistory();
             this.updateHistoryPanel();
@@ -1025,14 +992,12 @@ class ThinkBotAI {
     loadChat(chatId) {
         const chat = this.chatHistory.find(c => c.id === chatId);
         if (!chat) return;
-
         this.currentChat = chat;
         this.chatMessages.innerHTML = '';
         chat.messages.forEach(message => {
             const messageElement = this.createMessageElement(message);
             this.chatMessages.appendChild(messageElement);
         });
-
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
         this.updateHistoryPanel();
     }
@@ -1047,21 +1012,21 @@ class ThinkBotAI {
         this.updateHistoryPanel();
     }
 
-    // Save current chat to history when it has multiple messages
     saveCurrentChat() {
         if (this.currentChat && this.currentChat.messages.length > 1) {
             const existingIndex = this.chatHistory.findIndex(c => c.id === this.currentChat.id);
             if (existingIndex >= 0) {
-                this.chatHistory[existingIndex] = { ...this.currentChat };
+                this.chatHistory[existingIndex] = { ...this.currentChat
+                };
             } else {
-                this.chatHistory.unshift({ ...this.currentChat });
+                this.chatHistory.unshift({ ...this.currentChat
+                });
             }
             this.saveChatHistory();
         }
     }
 }
 
-// Global function for copying code
 function copyToClipboard(button) {
     const codeContent = button.parentElement.nextElementSibling.textContent;
     navigator.clipboard.writeText(codeContent).then(() => {
@@ -1073,14 +1038,12 @@ function copyToClipboard(button) {
     });
 }
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     window.thinkBot = new ThinkBotAI();
 });
 
-// Save chat when leaving the page
 window.addEventListener('beforeunload', () => {
     if (window.thinkBot) {
         window.thinkBot.saveCurrentChat();
     }
-}); 
+});

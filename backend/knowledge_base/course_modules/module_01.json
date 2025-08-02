@@ -1,0 +1,79 @@
+{
+  "module_id": "M01",
+  "module_title": "Module 1: Introduction to Bibliometrics and R Environment Setup",
+  "presenter": "Taylor Pap",
+  "duration_minutes": 17,
+  "module_summary": "This module introduces the concept of bibliometric analysis, its real-world applications in measuring scientific impact, and guides beginners through the installation of R and RStudio.",
+  "keywords": [
+    "bibliometrics",
+    "R",
+    "RStudio",
+    "installation",
+    "data sharing",
+    "citations",
+    "literature review",
+    "neuroscience",
+    "collaboration patterns",
+    "scientific trends",
+    "neuromorpho.org",
+    "data frame",
+    "variables",
+    "functions",
+    "console",
+    "script editor"
+  ],
+  "transcript_segments": [
+    {
+      "timestamp": "0:01",
+      "content": "Hello everyone and welcome to your first module of our R programming certificate. My name is Taylor Pap and I am the chief data officer here at Think Neuro. I'll be taking you through all four modules for your R programming series and don't worry if you don't know what biblometric analysis is or you've never programmed before. This is a beginner friendly course so don't stress."
+    },
+    {
+      "timestamp": "0:26",
+      "content": "And just a note before I start, make sure you guys are taking notes because you will need to submit them to your project managers at the end and if you don't, this could impact your placement for your individual research projects."
+    },
+    {
+      "timestamp": "1:55",
+      "content": "So what exactly is biblometrics? Biblometrics is the quantitative analysis of scientific publications. In other words, it's how we use numbers to study the science that's already been published. This includes looking at things like how many papers have been published on a certain topic, how often those papers are cited by other researchers, what keywords are most common, who collaborates with who, which researchers, institutions or even countries that are working together. A really helpful way to think about what biblometrics is, is it's the science of measuring science."
+    },
+    {
+      "timestamp": "2:33",
+      "content": "Here's a real world example just to make it a little more concrete in your head. Let's say you're curious about artificial intelligence and how it's being used in neuroscience. With biblometric tools, you can analyze papers published over the last 10 years and find out how much research on that topic has grown, what key words like deep learning or brain imaging are becoming more popular, which journals are publishing the most papers on it, and who the top authors or institutions are. This kind of analysis helps researchers, students, and even policy makers understand the current state of a field and where it might be heading next."
+    },
+    {
+      "timestamp": "3:34",
+      "content": "Let's talk about why it actually matters and why researchers use it so often. Firstly, biblometrics helps us track scientific trends. Secondly, it helps us identify influential research, so which articles are being cited the most, which authors are leading the conversation in a particular field. Thirdly, biblometrics can reveal collaboration patterns. And finally, this kind of analysis guides literature reviews. Instead of just randomly searching or reading everything you see on Google, you can use data to find the most relevant, most cited and most impactful papers to focus on."
+    },
+    {
+      "timestamp": "4:58",
+      "content": "I'm going to take you through a real example of how biblometric analysis was used to study the impact of data sharing in neuroscience publications. Researchers wanted to know if sharing digital reconstructions of neuromorphology through the neuromorpho.org actually increases the number of citations an article received. They found that sharing articles averaged 8.91 citations per year compared to the 6.19 for unsharing articles, a 44% increase in citation rate. A pretty powerful takeaway: simply sharing your data boosts visibility, and most of the citation advantage comes from increased exposure and credibility, not just reuse."
+    },
+    {
+      "timestamp": "7:35",
+      "content": "I want to clear one thing up that can be a little confusing, and that's what's the difference between R and R Studio. Think of R as the engine. It's the programming language that actually runs your code and does all the calculations. And R Studio is the dashboard. It gives you a clean, organized interface to write, edit, and run your R code more easily. You need both to get started."
+    },
+    {
+      "timestamp": "8:14",
+      "content": "The first step you're going to do is you can take the link in the address you see here in the picture or you can just simply Google R Studios and this should be one of the first couple links and you're going to press install R."
+    },
+    {
+      "timestamp": "9:27",
+      "content": "Every Wednesday a Google form is going to be sent out in our Slack channel and I want you guys to submit this by the following Monday 11:59 p.m. Eastern Standard Time with questions that you plan to bring to office hours. My office hours are going to be every Wednesday at 5:30 p.m. to 6:30 p.m. Eastern Standard Time on Zoom."
+    },
+    {
+      "timestamp": "10:51",
+      "content": "Our studios is organized into four main panes: we have our console, our scripts, the environment, and then our files. The console is down here and this is where R runs your code. Up here we have our script editor. On the top right we have our environment, this stores our variables, data frames, and the functions you've created. And then down here is your files."
+    },
+    {
+      "timestamp": "12:38",
+      "content": "We're just going to work on assigning variables. First, we're going to assign the number 10 to a variable we call citation. So now we set citation equal to the value of 10. You can also assign a list or a vector."
+    },
+    {
+      "timestamp": "13:49",
+      "content": "With this we can use a couple of built-in functions for biblometrics. So for example, with this vector, if we wanted to see the length of it, we could use length(). If we wanted to sum the citations, we can use the sum() function. We can find its mean(), its maximum(), and we can even sort it."
+    },
+    {
+      "timestamp": "15:04",
+      "content": "Now we're actually going to create our own little data frame. Here we're going to create a small data frame. We're going to set our titles, we're going to use a vector. We'll call it paper A, paper B, paper C. And then we'll need the years. And then we have our citation count. And then if we print papers, you guys have your own little data frame to play around with."
+    }
+  ]
+}
