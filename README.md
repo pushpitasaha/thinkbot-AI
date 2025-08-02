@@ -8,7 +8,7 @@ A modern, interactive chatbot interface designed specifically for R programming 
 
 ## 🚀 Live Demo
 
-Visit the live application: [ThinkBot AI Demo](https://your-github-username.github.io/thinkbot-AI/)
+Visit the live application: [ThinkBot AI Demo](https://pushpitasaha.github.io/thinkbot-AI/)
 
 ## ✨ Features
 
