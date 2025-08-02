@@ -1,0 +1,181 @@
+{
+    "theme": {
+      "colors": {
+        "background": "#F5F6F8",
+        "sidebarBackground": "#19304C",
+        "panelBackground": "#FFFFFF",
+        "accent": "#809ABF",
+        "accentAlt": "#5E8457",
+        "primaryText": "#19304C",
+        "secondaryText": "#809ABF",
+        "border": "#ABCDFF",
+        "divider": "#ABCDFF"
+      },
+      "typography": {
+        "fontFamily": "Inter, sans-serif",
+        "fontSizes": {
+          "xs": "12px",
+          "sm": "14px",
+          "base": "16px",
+          "lg": "18px",
+          "xl": "24px"
+        },
+        "fontWeights": {
+          "normal": 400,
+          "medium": 500,
+          "bold": 600
+        },
+        "lineHeights": {
+          "normal": 1.5,
+          "heading": 1.2
+        }
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px"
+      },
+      "radii": {
+        "sm": "4px",
+        "md": "8px",
+        "lg": "16px",
+        "pill": "9999px"
+      },
+      "shadows": {
+        "sm": "0 1px 2px rgba(0,0,0,0.05)",
+        "md": "0 4px 6px rgba(0,0,0,0.1)",
+        "lg": "0 10px 15px rgba(0,0,0,0.15)"
+      }
+    },
+    "layout": {
+      "grid": {
+        "columns": 12,
+        "gutter": "16px"
+      },
+      "header": {
+        "height": "64px",
+        "padding": "0 16px"
+      },
+      "sidebar": {
+        "width": "240px",
+        "padding": "16px"
+      },
+      "panel": {
+        "width": "300px",
+        "padding": "16px"
+      },
+      "content": {
+        "padding": "16px",
+        "maxWidth": "100%"
+      }
+    },
+    "components": {
+      "sidebarItem": {
+        "height": "40px",
+        "fontSize": "14px",
+        "fontWeight": "medium",
+        "colorDefault": "secondaryText",
+        "colorActive": "accent",
+        "backgroundHover": "rgba(128,154,191,0.1)",
+        "iconSize": "20px"
+      },
+      "button": {
+        "primary": {
+          "background": "accent",
+          "color": "#FFFFFF",
+          "padding": "8px 16px",
+          "borderRadius": "md",
+          "fontWeight": "medium",
+          "shadow": "sm"
+        },
+        "secondary": {
+          "background": "#FFFFFF",
+          "border": "1px solid border",
+          "color": "primaryText",
+          "padding": "8px 16px",
+          "borderRadius": "md",
+          "fontWeight": "normal"
+        },
+        "icon": {
+          "size": "24px",
+          "color": "secondaryText",
+          "hoverColor": "primaryText"
+        }
+      },
+      "input": {
+        "height": "40px",
+        "background": "#FFFFFF",
+        "border": "1px solid border",
+        "padding": "0 12px",
+        "borderRadius": "md",
+        "placeholderColor": "secondaryText",
+        "iconSize": "16px"
+      },
+      "card": {
+        "padding": "24px",
+        "background": "#FFFFFF",
+        "borderRadius": "lg",
+        "shadow": "md"
+      },
+      "badge": {
+        "background": "accentAlt",
+        "color": "#FFFFFF",
+        "fontSize": "12px",
+        "padding": "2px 8px",
+        "borderRadius": "pill"
+      },
+      "tabs": {
+        "height": "48px",
+        "indicatorThickness": "2px",
+        "indicatorColor": "accent",
+        "textColorActive": "primaryText",
+        "textColorInactive": "secondaryText",
+        "padding": "0 16px"
+      },
+      "checkbox": {
+        "size": "16px",
+        "border": "1.5px solid border",
+        "borderRadius": "sm",
+        "checkedBackground": "accent",
+        "checkmarkColor": "#FFFFFF"
+      },
+      "divider": {
+        "height": "1px",
+        "background": "divider"
+      },
+      "searchInput": {
+        "height": "40px",
+        "background": "#FFFFFF",
+        "border": "1px solid border",
+        "borderRadius": "md",
+        "paddingLeft": "40px",
+        "iconPosition": {
+          "top": "50%",
+          "left": "12px",
+          "transform": "translateY(-50%)"
+        }
+      }
+    },
+    "breakpoints": {
+      "sm": "480px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1440px"
+    },
+    "structure": {
+      "areas": [
+        "sidebar",
+        "header",
+        "main",
+        "panel"
+      ],
+      "columns": {
+        "sidebar": 2,
+        "main": 8,
+        "panel": 2
+      }
+    }
+  }
+  
