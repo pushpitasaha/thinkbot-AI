@@ -1,15 +1,17 @@
+# =========================================================================
+# General Project Ignores
+# =========================================================================
+
 # Dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
+# Environment variables - IMPORTANT for security
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
 # IDE files
 .vscode/
@@ -42,4 +44,42 @@ coverage/
 
 # Temporary folders
 tmp/
-temp/ 
+temp/
+
+# =========================================================================
+# Python & Backend Specific Ignores
+# =========================================================================
+
+# Python virtual environment
+venv/
+/venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Auto-generated vector stores
+# These are built from the knowledge_base and can be large
+# Should not be committed to version control
+vector_stores/
+/backend/vector_stores/
+
+# Python distribution and installation files
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Celery files
+celerybeat-schedule
+celerybeat.pid
+
+# pytest cache
+.pytest_cache
+
+# mypy cache
+.mypy_cache

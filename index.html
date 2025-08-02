@@ -42,25 +42,33 @@
                 <div class="nav-section">
                     <h3>Frequently Asked</h3>
                     <ul class="nav-list">
-                        <li class="nav-item" data-module="basics">
-                            <i class="fas fa-book"></i>
-                            <span>R Basics</span>
+                        <li class="nav-item" data-module="bibliometrics-intro">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>What is Bibliometrics?</span>
                         </li>
-                        <li class="nav-item" data-module="data">
-                            <i class="fas fa-database"></i>
-                            <span>Data Manipulation</span>
+                        <li class="nav-item" data-module="r-vs-rstudio">
+                            <i class="fas fa-tv"></i>
+                            <span>R vs. RStudio</span>
                         </li>
-                        <li class="nav-item" data-module="visualization">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Visualization</span>
+                        <li class="nav-item" data-module="assigning-variables">
+                            <i class="fas fa-equals"></i>
+                            <span>Assigning Variables</span>
                         </li>
-                        <li class="nav-item" data-module="statistics">
-                            <i class="fas fa-calculator"></i>
-                            <span>Statistics</span>
+                        <li class="nav-item" data-module="about-ggplot2">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>About `ggplot2`</span>
                         </li>
-                        <li class="nav-item" data-module="packages">
-                            <i class="fas fa-box"></i>
-                            <span>Packages</span>
+                         <li class="nav-item" data-module="about-dplyr">
+                            <i class="fas fa-table"></i>
+                            <span>About `dplyr`</span>
+                        </li>
+                        <li class="nav-item" data-module="review-my-code">
+                            <i class="fas fa-search-plus"></i>
+                            <span>Review my R Code</span>
+                        </li>
+                        <li class="nav-item" data-module="what-is-pvalue">
+                            <i class="fas fa-percentage"></i>
+                            <span>What is a p-value?</span>
                         </li>
                     </ul>
                 </div>
@@ -145,6 +153,10 @@
 
                         <div class="chat-messages" id="chat-messages">
                             <!-- Messages will be dynamically added here -->
+                        </div>
+                        
+                        <div id="suggested-prompts-container" class="suggested-prompts-container">
+                            <!-- Suggested prompts will be dynamically added here -->
                         </div>
                         
                         <div class="chat-input-container">
@@ -302,7 +314,8 @@
             </div>
         </div>
     </div>
-
+    <!-- Load configuration first, then the main script -->
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
