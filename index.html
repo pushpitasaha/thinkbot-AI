@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThinkBot AI - R Support Assistant</title>
+    <title>ThinkCode AI - R Support Assistant</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.cdnfonts.com/css/gilroy" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,12 +17,12 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="think-neuro-logo.png" alt="ThinkNeuro Logo" class="logo">
-                <h2>ThinkBot AI</h2>
+                <h2>ThinkCode AI</h2>
             </div>
             
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <h3>Quick Actions</h3>
+                    <h3>Navigation</h3>
                     <ul class="nav-list">
                         <li class="nav-item active" data-tab="chat">
                             <i class="fas fa-comments"></i>
@@ -34,7 +34,7 @@
                         </li>
                         <li class="nav-item" data-tab="search">
                             <i class="fas fa-search"></i>
-                            <span>Search Chats</span>
+                            <span>Search</span>
                         </li>
                     </ul>
                 </div>
@@ -48,11 +48,11 @@
                         </li>
                         <li class="nav-item" data-module="data">
                             <i class="fas fa-database"></i>
-                            <span>Data Manipulation</span>
+                            <span>Data Analysis</span>
                         </li>
                         <li class="nav-item" data-module="visualization">
                             <i class="fas fa-chart-bar"></i>
-                            <span>Visualization</span>
+                            <span>Visualizations</span>
                         </li>
                         <li class="nav-item" data-module="statistics">
                             <i class="fas fa-calculator"></i>
@@ -60,7 +60,11 @@
                         </li>
                         <li class="nav-item" data-module="packages">
                             <i class="fas fa-box"></i>
-                            <span>Packages</span>
+                            <span>R Packages</span>
+                        </li>
+                        <li class="nav-item" data-module="advanced">
+                            <i class="fas fa-rocket"></i>
+                            <span>Advanced R</span>
                         </li>
                     </ul>
                 </div>
@@ -80,9 +84,9 @@
                                 <div class="welcome-avatar">
                                     <i class="fas fa-robot"></i>
                                 </div>
-                                <h1 class="welcome-title">Hello! I'm ThinkBot AI</h1>
+                                <h1 class="welcome-title">Hello! I'm ThinkCode AI</h1>
                                 <p class="welcome-subtitle">ThinkNeuro's R Support Assistant</p>
-                                <p class="welcome-message">What R issue can I help with?</p>
+                                <p class="welcome-message">How can I help you today?</p>
                                 
                                 <!-- Welcome Input -->
                                 <div class="welcome-input-section">
@@ -162,7 +166,7 @@
                             <div class="input-wrapper">
                                 <textarea 
                                     id="message-input" 
-                                    placeholder="Ask me anything about R programming..."
+                                    placeholder="Type your message here..."
                                     rows="1"
                                 ></textarea>
                                 <button class="send-btn" id="send-message">

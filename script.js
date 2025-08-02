@@ -1,6 +1,6 @@
-// ThinkBot AI - Main JavaScript File
+// ThinkCode AI - Main JavaScript File
 
-class ThinkBotAI {
+class ThinkCodeAI {
     constructor() {
         this.currentChat = null;
         this.chatHistory = this.loadChatHistory();
@@ -641,7 +641,7 @@ class ThinkBotAI {
         
         const content = document.createElement('div');
         content.className = 'message-content';
-        content.innerHTML = '<div class="loading"><div class="loading-spinner"></div>ThinkBot AI is typing...</div>';
+        content.innerHTML = '<div class="loading"><div class="loading-spinner"></div>ThinkCode AI is typing...</div>';
 
         typingDiv.appendChild(content);
         this.chatMessages.appendChild(typingDiv);
@@ -1075,12 +1075,12 @@ function copyToClipboard(button) {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    window.thinkBot = new ThinkBotAI();
+    window.thinkCode = new ThinkCodeAI();
 });
 
 // Save chat when leaving the page
 window.addEventListener('beforeunload', () => {
-    if (window.thinkBot) {
-        window.thinkBot.saveCurrentChat();
+    if (window.thinkCode) {
+        window.thinkCode.saveCurrentChat();
     }
 }); 
