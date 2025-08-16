@@ -18,6 +18,12 @@
             <div class="sidebar-header">
                 <img src="think-neuro-logo.png" alt="ThinkNeuro Logo" class="logo">
                 <h2>ThinkBot AI</h2>
+                
+                <!-- === NEW CHAT BUTTON === -->
+                <button class="btn-icon btn-new-chat" id="new-chat-btn" title="New Chat">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <!-- ======================= -->
             </div>
             
             <nav class="sidebar-nav">
@@ -44,31 +50,24 @@
                     <ul class="nav-list">
                         <li class="nav-item" data-module="bibliometrics-intro">
                             <i class="fas fa-chart-pie"></i>
-                            <span>What is Bibliometrics?</span>
-                        </li>
-                        <li class="nav-item" data-module="r-vs-rstudio">
-                            <i class="fas fa-tv"></i>
-                            <span>R vs. RStudio</span>
-                        </li>
-                        <li class="nav-item" data-module="assigning-variables">
-                            <i class="fas fa-equals"></i>
-                            <span>Assigning Variables</span>
+                            <div class="nav-item-content">
+                                <span>What is Bibliometrics?</span>
+                                <small class="nav-item-note">Course Material</small>
+                            </div>
                         </li>
                         <li class="nav-item" data-module="about-ggplot2">
                             <i class="fas fa-paint-brush"></i>
-                            <span>About `ggplot2`</span>
-                        </li>
-                         <li class="nav-item" data-module="about-dplyr">
-                            <i class="fas fa-table"></i>
-                            <span>About `dplyr`</span>
-                        </li>
-                        <li class="nav-item" data-module="review-my-code">
-                            <i class="fas fa-search-plus"></i>
-                            <span>Review my R Code</span>
+                            <div class="nav-item-content">
+                                <span>About `ggplot2`</span>
+                                <small class="nav-item-note">Package Documentation</small>
+                            </div>
                         </li>
                         <li class="nav-item" data-module="what-is-pvalue">
                             <i class="fas fa-percentage"></i>
-                            <span>What is a p-value?</span>
+                            <div class="nav-item-content">
+                                <span>What is a p-value?</span>
+                                <small class="nav-item-note">General Knowledge</small>
+                            </div>
                         </li>
                     </ul>
                 </div>

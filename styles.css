@@ -107,6 +107,7 @@ body {
     margin-bottom: var(--spacing-2xl);
     padding-bottom: var(--spacing-lg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative; /* Added for positioning the new chat button */
 }
 
 .logo {
@@ -191,6 +192,28 @@ body {
     text-align: center;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
+}
+
+.nav-item-content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.nav-item-content span {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.nav-item-note {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    opacity: 0.6;
+    margin-top: 2px;
+    line-height: 1.2;
 }
 
 .nav-item span {
@@ -1194,6 +1217,27 @@ body {
     color: var(--accent);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* New Chat Button */
+.btn-new-chat {
+    /* Position the '+' button on the far right of the header */
+    position: absolute;
+    top: 50%;
+    right: 0; /* Align to the right edge of the header */
+    transform: translateY(-50%);
+    
+    /* Make it slightly different to stand out */
+    border-color: var(--accent-light);
+    color: var(--accent-light);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-new-chat:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    transform: translateY(-50%) translateY(-2px); /* Maintain vertical centering while adding hover effect */
 }
 
 /* Modal */

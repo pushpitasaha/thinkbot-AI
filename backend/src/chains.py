@@ -17,11 +17,15 @@ def create_master_chain(llm, retrievers):
     """
     # A. The Router Chain
     router_prompt = PromptTemplate.from_template(
-        """Given the user question, classify it as one of: `r_packages`, `course_modules`, or `general_knowledge`.
+        """Given the user question, classify it into one of the following categories: `r_packages`, `course_modules`, or `general_knowledge`.
         Do not respond with more than one word.
-        `r_packages`: Questions about R packages like dplyr or ggplot2.
-        `course_modules`: Questions about course content, modules, or lecture material.
-        `general_knowledge`: All other questions.
+
+        `r_packages`: Use for questions specifically about R packages like dplyr, ggplot2, tidyr, their functions, and usage based on package documentation.
+
+        `course_modules`: Use ONLY for questions about topics explicitly covered in the ThinkNeuro course material, such as bibliometrics, research methodology, data sharing, or specific R concepts taught in the lectures (e.g., assigning variables with `<-`).
+
+        `general_knowledge`: Use for all other questions, including general programming concepts, statistical questions (like p-values), or topics not mentioned in the course content.
+
         <question>{input}</question>
         Classification:"""
     )
@@ -52,8 +56,14 @@ def create_master_chain(llm, retrievers):
     # F. The Master Hybrid Chain
     def route(info: Dict[str, Any]) -> Literal["course_modules", "r_packages", "general_knowledge"]:
         topic_str = info["topic"].content.lower()
-        if "course_modules" in topic_str: return "course_modules"
-        if "r_packages" in topic_str: return "r_packages"
+        print(f"DEBUG ROUTER: Router classified as: '{topic_str}'")
+        if "course_modules" in topic_str: 
+            print(f"DEBUG ROUTER: Routing to course_modules")
+            return "course_modules"
+        if "r_packages" in topic_str: 
+            print(f"DEBUG ROUTER: Routing to r_packages")
+            return "r_packages"
+        print(f"DEBUG ROUTER: Routing to general_knowledge")
         return "general_knowledge"
 
     master_chain = {"topic": router, "input": lambda x: x["input"]} | RunnableBranch(

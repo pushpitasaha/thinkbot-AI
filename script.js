@@ -2,8 +2,9 @@
 
 class ThinkBotAI {
     constructor() {
-        this.currentChat = null;
-        this.chatHistory = this.loadChatHistory();
+        // --- MODIFIED: State is now simpler ---
+        this.currentChat = null; // Will hold {id, title, messages}
+        this.chatHistory = [];   // Will hold {id, title, timestamp} from server
         this.attachments = [];
         this.mediaRecorder = null;
         this.recordingChunks = [];
@@ -14,10 +15,21 @@ class ThinkBotAI {
         
         this.initializeElements();
         this.bindEvents();
-        this.loadInitialChat();
-        this.updateHistoryPanel();
+        // --- NEW: Asynchronously load history from backend ---
+        this.initializeChat(); 
         this.initializeWelcomeAnimations();
         this.initializeSplitTextAnimations();
+    }
+
+    // --- NEW METHOD ---
+    async initializeChat() {
+        await this.fetchHistory();
+        if (this.chatHistory && this.chatHistory.length > 0) {
+            // Load the most recent chat by default
+            this.loadChat(this.chatHistory[0].id);
+        } else {
+            this.showWelcomeMessage();
+        }
     }
 
     initializeElements() {
@@ -64,6 +76,9 @@ class ThinkBotAI {
         // Module elements
         this.moduleCards = document.querySelectorAll('.module-card');
         this.modulesTitle = document.getElementById('modules-title');
+        
+        // New Chat elements
+        this.newChatBtn = document.getElementById('new-chat-btn');
     }
 
     bindEvents() {
@@ -82,20 +97,20 @@ class ThinkBotAI {
         });
 
         // Chat events
-        this.sendButton.addEventListener('click', () => this.sendMessage());
+        this.sendButton.addEventListener('click', () => this.sendMessage(false));
         this.messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                this.sendMessage();
+                this.sendMessage(false);
             }
         });
 
         // Welcome input events
-        this.welcomeSendButton.addEventListener('click', () => this.sendWelcomeMessage());
+        this.welcomeSendButton.addEventListener('click', () => this.sendMessage(true));
         this.welcomeMessageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                this.sendWelcomeMessage();
+                this.sendMessage(true);
             }
         });
 
@@ -149,13 +164,17 @@ class ThinkBotAI {
                 this.handleSuggestionClick(suggestion);
             });
         });
+
+        // New Chat button event
+        this.newChatBtn.addEventListener('click', () => this.createNewChat());
     }
 
     initializeSplitTextAnimations() {
-        if (typeof gsap !== 'undefined') {
-            gsap.registerPlugin(ScrollTrigger);
-            this.initializeModulesTitleAnimation();
-        }
+        // Disable SplitText animations for now
+        // if (typeof gsap !== 'undefined' && typeof SplitText !== 'undefined') {
+        //     gsap.registerPlugin(ScrollTrigger);
+        //     this.initializeModulesTitleAnimation();
+        // }
     }
 
     initializeModulesTitleAnimation() {
@@ -373,14 +392,23 @@ class ThinkBotAI {
     }
 
     handleModuleClick(module) {
+        // R Support Academy modules - redirect to YouTube
+        const youtubeModules = [
+            'bibliometric-rstudio',
+            'data-collection', 
+            'bibliometric-techniques',
+            'data-visualization'
+        ];
+
+        if (youtubeModules.includes(module)) {
+            // Open ThinkNeuro YouTube channel in a new tab
+            window.open('https://www.youtube.com/@ThinkNeuroUSA/videos', '_blank');
+            return;
+        }
+
+        // For other modules (Frequently Asked), continue with chat
         this.switchTab('chat');
         const moduleMessages = {
-            // Questions from "R Support Academy" cards
-            'bibliometric-rstudio': "I'd like to learn about bibliometric analysis and RStudio. Can you help me get started?",
-            'data-collection': "I want to learn about data collection and preparation in R. What should I know?",
-            'bibliometric-techniques': "I'm interested in bibliometric analysis techniques. Can you show me some examples?",
-            'data-visualization': "I need help with data visualization and interpretation in R. Where should I begin?",
-
             // New questions from modified "Frequently Asked" sidebar
             'bibliometrics-intro': "What is bibliometrics?",
             'r-vs-rstudio': "What is the difference between R and RStudio?",
@@ -407,78 +435,41 @@ class ThinkBotAI {
         this.sendWelcomeMessage();
     }
 
-    async sendWelcomeMessage() {
-        const message = this.welcomeMessageInput.value.trim();
-        if (!message) return;
+    createNewChat() {
+        // 1. Reset the current chat state in the frontend.
+        //    This is the most critical step. The next message sent will now
+        //    be treated as the start of a brand new chat.
+        this.currentChat = null;
 
-        if (this.welcomeContainer && this.welcomeContainer.style.display !== 'none') {
-            this.welcomeContainer.style.display = 'none';
-        }
+        // 2. Clear all messages from the display.
+        this.chatMessages.innerHTML = '';
 
-        const userMessage = {
-            id: Date.now(),
-            type: 'user',
-            text: message,
-            attachments: [],
-            timestamp: new Date()
-        };
-
-        this.addMessageToChat(userMessage);
-        this.welcomeMessageInput.value = '';
-        this.welcomeMessageInput.style.height = 'auto';
-
-        this.showTypingIndicator();
+        // 3. Hide any suggested prompts.
         this.displaySuggestedPrompts([]);
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    question: message
-                }),
-            });
+        // 4. Show the original welcome screen again.
+        this.showWelcomeMessage();
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        // 5. Clear the main message input box.
+        this.messageInput.value = '';
 
-            const data = await response.json();
-            const aiResponse = {
-                id: Date.now() + 1,
-                type: 'ai',
-                text: data.answer,
-                sources: data.sources || [],
-                timestamp: new Date()
-            };
+        // 6. Clear the welcome message input box too.
+        this.welcomeMessageInput.value = '';
 
-            this.hideTypingIndicator();
-            this.addMessageToChat(aiResponse);
-            this.displaySuggestedPrompts(data.suggested_prompts || []);
-
-        } catch (error) {
-            console.error('Error fetching AI response:', error);
-            this.hideTypingIndicator();
-            const errorResponse = {
-                id: Date.now() + 1,
-                type: 'ai',
-                text: 'Sorry, I am having trouble connecting to the server.',
-                timestamp: new Date()
-            };
-            this.addMessageToChat(errorResponse);
-        }
+        // 7. De-select any active chat in the history panel by re-rendering it.
+        this.updateHistoryPanel();
     }
 
-    async sendMessage() {
-        const message = this.messageInput.value.trim();
+    async sendMessage(isWelcomeMessage = false) {
+        const inputElement = isWelcomeMessage ? this.welcomeMessageInput : this.messageInput;
+        const message = inputElement.value.trim();
         if (!message && this.attachments.length === 0) return;
 
         if (this.welcomeContainer && this.welcomeContainer.style.display !== 'none') {
             this.welcomeContainer.style.display = 'none';
         }
 
+        // Add user message to UI immediately for responsiveness
         const userMessage = {
             id: Date.now(),
             type: 'user',
@@ -486,10 +477,9 @@ class ThinkBotAI {
             attachments: [...this.attachments],
             timestamp: new Date()
         };
-
-        this.addMessageToChat(userMessage);
-        this.messageInput.value = '';
-        this.messageInput.style.height = 'auto';
+        this.addMessageToChatUI(userMessage);
+        inputElement.value = '';
+        inputElement.style.height = 'auto';
         this.attachments = [];
         this.updateAttachmentsDisplay();
 
@@ -497,21 +487,111 @@ class ThinkBotAI {
         this.displaySuggestedPrompts([]);
 
         try {
+            // --- MODIFIED: Send chat_id to backend ---
             const response = await fetch(`${API_BASE_URL}/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    question: message
+                    question: message,
+                    chat_id: this.currentChat ? this.currentChat.id : null
                 }),
             });
 
+            // First check if we got a valid HTTP response
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // Handle HTTP errors (like 500, 404, etc.)
+                let errorMessage = `Server error (${response.status})`;
+                try {
+                    // Try to parse error response as JSON if possible
+                    const errorData = await response.json();
+                    if (errorData.answer) {
+                        errorMessage = errorData.answer;
+                    } else if (errorData.error) {
+                        errorMessage = `Error: ${errorData.error}`;
+                    }
+                } catch {
+                    // If JSON parsing fails, use a generic message
+                    errorMessage = `Server error (${response.status}): Please check your configuration and try again.`;
+                }
+                
+                this.hideTypingIndicator();
+                const errorResponse = {
+                    id: Date.now() + 1,
+                    type: 'ai',
+                    text: errorMessage,
+                    timestamp: new Date()
+                };
+                this.addMessageToChatUI(errorResponse);
+                return; // Exit early for HTTP errors
+            }
+            
+            // If we get here, the HTTP response was successful (200)
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                console.error('Failed to parse JSON response:', jsonError);
+                this.hideTypingIndicator();
+                const errorResponse = {
+                    id: Date.now() + 1,
+                    type: 'ai',
+                    text: 'Received an invalid response from the server. Please try again.',
+                    timestamp: new Date()
+                };
+                this.addMessageToChatUI(errorResponse);
+                return;
             }
 
-            const data = await response.json();
+            // =================================================================
+            // --- THIS IS THE FIX ---
+            // Check if the backend returned its specific error format.
+            if (data.error) {
+                // If there's an error, just display the error message and stop.
+                // Do not try to process chat_id or sources that don't exist.
+                this.hideTypingIndicator();
+                const errorResponse = {
+                    id: Date.now() + 1,
+                    type: 'ai',
+                    text: data.answer, // Use the friendly error message from the backend
+                    timestamp: new Date()
+                };
+                this.addMessageToChatUI(errorResponse);
+                return; // Exit the function to prevent further errors.
+            }
+            // --- END OF FIX ---
+            // =================================================================
+
+            // This code below will now ONLY run if the backend response was successful.
+            // Backend now handles saving, we just need to update the UI
+            const isNewChat = !this.currentChat;
+            if (isNewChat) {
+                // If this was a new chat, INSTEAD of re-fetching the whole history,
+                // we will intelligently add the new chat to the top of our list.
+                const chat_title = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+                const newChatSummary = { 
+                    id: data.chat_id, 
+                    title: chat_title, 
+                    messages: [userMessage], // for the preview
+                    timestamp: new Date().toISOString() 
+                };
+                
+                // Add to our local state array
+                if (!this.chatHistory) {
+                    this.chatHistory = [];
+                }
+                this.chatHistory.unshift(newChatSummary);
+                
+                // Instead of rebuilding entire panel, just add the new item at the top
+                this.addNewChatToHistoryPanel(newChatSummary);
+            }
+
+            // Set the current chat ID from the backend's response
+            if (!this.currentChat) {
+                this.currentChat = { id: data.chat_id, messages: [userMessage] };
+            } else {
+                this.currentChat.id = data.chat_id;
+            }
+
             const aiResponse = {
                 id: Date.now() + 1,
                 type: 'ai',
@@ -521,8 +601,11 @@ class ThinkBotAI {
             };
 
             this.hideTypingIndicator();
-            this.addMessageToChat(aiResponse);
+            this.addMessageToChatUI(aiResponse); // Add AI response to UI
             this.displaySuggestedPrompts(data.suggested_prompts || []);
+            
+            // Ensure the correct chat is marked as active in the history panel
+            this.updateHistoryPanel();
 
         } catch (error) {
             console.error('Error fetching AI response:', error);
@@ -533,25 +616,18 @@ class ThinkBotAI {
                 text: 'Sorry, I am having trouble connecting to the server.',
                 timestamp: new Date()
             };
-            this.addMessageToChat(errorResponse);
+            this.addMessageToChatUI(errorResponse);
         }
     }
 
-    addMessageToChat(message) {
+    async sendWelcomeMessage() {
+        return this.sendMessage(true);
+    }
+
+    addMessageToChatUI(message) {
         const messageElement = this.createMessageElement(message);
         this.chatMessages.appendChild(messageElement);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-
-        if (!this.currentChat) {
-            this.currentChat = {
-                id: Date.now(),
-                title: message.text.substring(0, 50) + (message.text.length > 50 ? '...' : ''),
-                messages: [],
-                timestamp: new Date()
-            };
-        }
-        this.currentChat.messages.push(message);
-        this.updateHistoryPanel();
     }
 
     createMessageElement(message) {
@@ -583,9 +659,27 @@ class ThinkBotAI {
             message.sources.forEach(source => {
                 const sourceLink = document.createElement('a');
                 sourceLink.className = 'source-link';
-                sourceLink.href = source.video_url || '#';
                 sourceLink.target = '_blank';
-                sourceLink.innerHTML = `<i class="fas fa-book-open"></i> ${source.source_module} (at ${source.timestamp})`;
+                // Use a non-functional href to prevent page reloads, as we don't have direct URLs.
+                sourceLink.href = '#'; 
+
+                let displayText = 'Unknown Source';
+
+                // Case 1: Handle sources from course modules (JSON)
+                if (source.source_module) {
+                    displayText = `${source.source_module} (at ${source.timestamp})`;
+                }
+                // Case 2: Handle sources from documents (PDFs)
+                else if (source.source) {
+                    const filename = source.source.split(/[\\/]/).pop(); // Extracts the filename from the path
+                    displayText = filename;
+                    if (source.page !== undefined) {
+                        // Add 1 to the page number because it's often 0-indexed
+                        displayText += ` (Page ${source.page + 1})`;
+                    }
+                }
+
+                sourceLink.innerHTML = `<i class="fas fa-book-open"></i> ${displayText}`;
                 sourcesContainer.appendChild(sourceLink);
             });
             content.appendChild(sourcesContainer);
@@ -665,10 +759,23 @@ class ThinkBotAI {
     }
 
     formatTime(date) {
-        return new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(date);
+        try {
+            // Handle both string timestamps and Date objects
+            const dateObj = typeof date === 'string' ? new Date(date) : date;
+            
+            // Check if date is valid
+            if (isNaN(dateObj.getTime())) {
+                return 'Unknown time';
+            }
+            
+            return new Intl.DateTimeFormat('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(dateObj);
+        } catch (error) {
+            console.error('Error formatting time:', error, 'Date value:', date);
+            return 'Unknown time';
+        }
     }
 
     showTypingIndicator() {
@@ -847,15 +954,21 @@ class ThinkBotAI {
     searchChatHistory(query) {
         const results = [];
         const searchTerm = query.toLowerCase();
+
+        // We only have access to chat.title on the client-side,
+        // so we will search within that.
         this.chatHistory.forEach(chat => {
-            const matchingMessages = chat.messages.filter(message =>
-                message.text.toLowerCase().includes(searchTerm)
-            );
-            if (matchingMessages.length > 0) {
-                results.push({
-                    chat: chat,
-                    messages: matchingMessages
-                });
+            if (chat && chat.title) {
+                // Check if the lowercase title includes the search term.
+                if (chat.title.toLowerCase().includes(searchTerm)) {
+                    // If it matches, add the entire chat object to the results.
+                    // We add a 'messages' array with a placeholder for consistency with
+                    // what the displaySearchResults function expects.
+                    results.push({
+                        chat: chat,
+                        messages: [{ text: chat.title }] // Use the title as the preview text
+                    });
+                }
             }
         });
         return results;
@@ -880,22 +993,30 @@ class ThinkBotAI {
         });
     }
 
-    loadChatHistory() {
-        const saved = localStorage.getItem('thinkbot_chat_history');
-        return saved ? JSON.parse(saved) : [];
-    }
-
-    saveChatHistory() {
-        localStorage.setItem('thinkbot_chat_history', JSON.stringify(this.chatHistory));
+    // --- NEW METHOD ---
+    async fetchHistory() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/history`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch chat history');
+            }
+            this.chatHistory = await response.json();
+            this.updateHistoryPanel();
+        } catch (error) {
+            console.error("Error fetching history:", error);
+            this.historyList.innerHTML = '<div class="text-center">Error loading history.</div>';
+        }
     }
 
     updateHistoryPanel() {
         this.historyList.innerHTML = '';
-        if (this.chatHistory.length === 0) {
+        if (!this.chatHistory || this.chatHistory.length === 0) {
             this.historyList.innerHTML = '<div class="text-center">No chat history</div>';
             return;
         }
         this.chatHistory.forEach(chat => {
+            if (!chat || !chat.id) return; // Skip invalid chat objects
+            
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
             if (this.currentChat && this.currentChat.id === chat.id) {
@@ -912,10 +1033,16 @@ class ThinkBotAI {
             });
             const content = document.createElement('div');
             content.className = 'history-content';
+            
+            // Safe access to chat properties
+            const title = chat.title || 'Untitled Chat';
+            const preview = chat.title || 'No messages...';
+            const timestamp = chat.timestamp || new Date().toISOString();
+            
             content.innerHTML = `
-                <div class="history-title">${chat.title}</div>
-                <div class="history-preview">${chat.messages[0]?.text.substring(0, 50) || 'No messages'}...</div>
-                <div class="history-time">${this.formatTime(chat.timestamp)}</div>
+                <div class="history-title">${title}</div>
+                <div class="history-preview">${preview}</div>
+                <div class="history-time">${this.formatTime(timestamp)}</div>
             `;
             historyItem.appendChild(checkbox);
             historyItem.appendChild(content);
@@ -923,6 +1050,48 @@ class ThinkBotAI {
             this.historyList.appendChild(historyItem);
         });
         this.updateHistoryActions();
+    }
+
+    // NEW: Efficiently add a single new chat to the top of the history panel
+    addNewChatToHistoryPanel(chat) {
+        // Create the new history item
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item active'; // Mark as active since it's the current chat
+        
+        const checkbox = document.createElement('div');
+        checkbox.className = 'history-checkbox';
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleHistorySelection(chat.id, checkbox);
+        });
+        
+        const content = document.createElement('div');
+        content.className = 'history-content';
+        
+        const title = chat.title || 'Untitled Chat';
+        const preview = chat.title || 'No messages...';
+        const timestamp = chat.timestamp || new Date().toISOString();
+        
+        content.innerHTML = `
+            <div class="history-title">${title}</div>
+            <div class="history-preview">${preview}</div>
+            <div class="history-time">${this.formatTime(timestamp)}</div>
+        `;
+        
+        historyItem.appendChild(checkbox);
+        historyItem.appendChild(content);
+        historyItem.addEventListener('click', () => this.loadChat(chat.id));
+        
+        // Remove active class from other items
+        this.historyList.querySelectorAll('.history-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Add to the TOP of the history list
+        this.historyList.insertBefore(historyItem, this.historyList.firstChild);
+        
+        // Update the current chat reference
+        this.currentChat = chat;
     }
 
     toggleHistorySelection(chatId, checkbox) {
@@ -963,23 +1132,53 @@ class ThinkBotAI {
             '<i class="fas fa-check-square"></i>';
     }
 
-    clearSelectedHistory() {
+    async clearSelectedHistory() {
         if (this.selectedHistoryItems.size === 0) return;
+
         const confirmMessage = this.selectedHistoryItems.size === 1 ?
             'Are you sure you want to delete this chat?' :
             `Are you sure you want to delete ${this.selectedHistoryItems.size} chats?`;
+
         if (confirm(confirmMessage)) {
-            this.chatHistory = this.chatHistory.filter(chat =>
-                !this.selectedHistoryItems.has(chat.id)
-            );
-            if (this.currentChat && this.selectedHistoryItems.has(this.currentChat.id)) {
-                this.currentChat = null;
-                this.chatMessages.innerHTML = '';
-                this.showWelcomeMessage();
+            // Convert the Set of IDs to an Array for the API call
+            const idsToDelete = Array.from(this.selectedHistoryItems);
+
+            try {
+                // --- FIX APPLIED HERE: Call the backend to delete the chats ---
+                const response = await fetch(`${API_BASE_URL}/history/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: idsToDelete }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete chats on the server.');
+                }
+
+                // --- If the API call was successful, update the UI ---
+                
+                // 1. Filter the local chatHistory array
+                this.chatHistory = this.chatHistory.filter(chat =>
+                    !this.selectedHistoryItems.has(chat.id)
+                );
+
+                // 2. If the currently open chat was deleted, clear the view
+                if (this.currentChat && this.selectedHistoryItems.has(this.currentChat.id)) {
+                    this.currentChat = null;
+                    this.chatMessages.innerHTML = '';
+                    this.showWelcomeMessage();
+                }
+
+                // 3. Clear the selection set
+                this.selectedHistoryItems.clear();
+
+                // 4. Re-render the history panel with the updated data
+                this.updateHistoryPanel();
+
+            } catch (error) {
+                console.error('Error deleting chat history:', error);
+                alert('Could not delete chats. Please try again.');
             }
-            this.selectedHistoryItems.clear();
-            this.saveChatHistory();
-            this.updateHistoryPanel();
         }
     }
 
@@ -989,17 +1188,52 @@ class ThinkBotAI {
         }
     }
 
-    loadChat(chatId) {
-        const chat = this.chatHistory.find(c => c.id === chatId);
-        if (!chat) return;
-        this.currentChat = chat;
-        this.chatMessages.innerHTML = '';
-        chat.messages.forEach(message => {
-            const messageElement = this.createMessageElement(message);
-            this.chatMessages.appendChild(messageElement);
-        });
-        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-        this.updateHistoryPanel();
+    async loadChat(chatId) {
+        if (!this.chatHistory || !Array.isArray(this.chatHistory)) {
+            console.error('Chat history is not available');
+            return;
+        }
+        
+        const chat = this.chatHistory.find(c => c && c.id === chatId);
+        if (!chat) {
+            console.error('Chat not found:', chatId);
+            return;
+        }
+        
+        try {
+            // Fetch the complete chat messages from the backend
+            const response = await fetch(`${API_BASE_URL}/chats/${chatId}`);
+            
+            // The response is the array of messages itself.
+            const messagesArray = await response.json(); 
+            
+            // --- FIX APPLIED HERE ---
+            // Update the current chat's messages with the fetched array.
+            this.currentChat = { ...chat, messages: messagesArray || [] };
+            this.chatMessages.innerHTML = '';
+            
+            // --- FIX APPLIED HERE ---
+            // Load all messages by iterating directly over the messagesArray.
+            if (messagesArray && Array.isArray(messagesArray)) {
+                messagesArray.forEach(message => {
+                    // The createMessageElement function is already correct.
+                    const messageElement = this.createMessageElement(message);
+                    this.chatMessages.appendChild(messageElement);
+                });
+            }
+            
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            this.updateHistoryPanel(); // This highlights the correct chat
+            
+            // Hide the welcome message when a chat is loaded
+            if (this.welcomeContainer) {
+                this.welcomeContainer.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error loading chat:', error);
+            // Optionally display an error to the user in the chat window
+            this.chatMessages.innerHTML = '<div class="message ai"><div class="message-content">Sorry, there was an error loading this chat.</div></div>';
+        }
     }
 
     loadInitialChat() {
@@ -1042,8 +1276,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.thinkBot = new ThinkBotAI();
 });
 
-window.addEventListener('beforeunload', () => {
-    if (window.thinkBot) {
-        window.thinkBot.saveCurrentChat();
-    }
+// Global error handlers to prevent page resets
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    // Prevent the default behavior which might reload the page
+    event.preventDefault();
 });
+
+window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+    // Log the error but don't reload the page
+});
+
+// --- Removed unreliable beforeunload listener ---
+// Chat history is now saved after every message in addMessageToChat()
+// This ensures reliable saving without depending on browser events

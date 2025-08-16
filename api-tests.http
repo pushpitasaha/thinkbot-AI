@@ -1,0 +1,87 @@
+### ThinkBot AI API Tests
+### Use these to test your FastAPI backend endpoints
+
+### 1. Test Course Modules Routing (should find bibliometrics content)
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "What is bibliometrics?",
+  "chat_id": null
+}
+
+###
+
+### 2. Test General Knowledge Routing (should NOT search course content)
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "What is a p-value in statistics?",
+  "chat_id": null
+}
+
+###
+
+### 3. Test R Packages Routing (should search package docs)
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "Tell me about the ggplot2 package",
+  "chat_id": null
+}
+
+###
+
+### 4. Test Chat History
+GET http://127.0.0.1:8000/history
+
+###
+
+### 5. Test Get Specific Chat Messages (replace 1 with actual chat ID)
+GET http://127.0.0.1:8000/chats/1
+
+###
+
+### 6. Test Course Routing with R Installation Question
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "How do I install R and RStudio?",
+  "chat_id": null
+}
+
+###
+
+### 7. Test General Programming Question (should go to general knowledge)
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "What is a for loop in programming?",
+  "chat_id": null
+}
+
+###
+
+### 8. Test Another Package Question
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "What functions does dplyr provide?",
+  "chat_id": null
+}
+
+###
+
+### 9. Test Course Variable Assignment (should use course content)
+POST http://127.0.0.1:8000/chat
+Content-Type: application/json
+
+{
+  "question": "How do I assign variables in R?",
+  "chat_id": null
+}
