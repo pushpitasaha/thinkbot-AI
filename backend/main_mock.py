@@ -24,24 +24,23 @@ master_chain, suggestion_chain = create_master_chain(llm, retrievers)
 # --- 3. FastAPI Application ---
 app = FastAPI(title="Hybrid R Chatbot - Mock Version")
 
-allowed_origins = os.getenv("FRONTEND_URLS", "").split(",")
-allowed_origins = [origin for origin in allowed_origins if origin]
-
-if not allowed_origins:
-    # If .env is missing, add a default for local testing
-    allowed_origins = ["http://localhost:9000", "http://127.0.0.1:9000", "http://0.0.0.0:9000"]
-    print(f"WARNING: No FRONTEND_URLS found. Defaulting to: {allowed_origins}")
+# Temporary CORS fix - allow all origins for debugging
+print("CORS DEBUG MODE: Allowing all origins")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=["*"],  # Temporarily allow all origins
+    allow_credentials=False,  # Must be False when using "*"
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 class ChatRequest(BaseModel):
     question: str
+
+@app.options("/chat")
+def chat_options():
+    return {"message": "OK"}
 
 @app.post("/chat")
 def chat(request: ChatRequest) -> Dict[str, Any]:
