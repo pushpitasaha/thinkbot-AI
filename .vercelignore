@@ -1,0 +1,2 @@
+# Exclude API backend (deployed separately on Render)
+api/
