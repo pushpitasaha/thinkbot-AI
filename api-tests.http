@@ -2,7 +2,7 @@
 ### Use these to test your FastAPI backend endpoints
 
 ### 1. Test Course Modules Routing (should find bibliometrics content)
-POST http://127.0.0.1:8000/chat
+POST https://thinkbot-ai.onrender.com/chat
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 ###
 
 ### 2. Test General Knowledge Routing (should NOT search course content)
-POST http://127.0.0.1:8000/chat
+POST https://thinkbot-ai.onrender.com/chat
 Content-Type: application/json
 
 {
