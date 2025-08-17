@@ -83,3 +83,57 @@ celerybeat.pid
 
 # mypy cache
 .mypy_cache
+
+# =========================================================================
+# Project-Specific Ignores
+# =========================================================================
+
+# SQLite database files (chat history, etc.)
+# Comment out if you want to version control your database
+*.sqlite3
+*.sqlite
+*.db
+
+# Configuration files that might contain sensitive data
+config.local.js
+config.production.js
+
+# AI/ML model files (if you add any local models later)
+*.model
+*.pkl
+*.joblib
+models/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Mac-specific (additional)
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows-specific (additional)
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+
+# =========================================================================
+# Development & Testing
+# =========================================================================
+
+# Test files and test data
+test_data/
+test_output/
+*.test.js
+*.spec.js
+
+# Local development overrides
+.local/
+.dev/
+
+# Documentation build files
+docs/_build/
+site/
